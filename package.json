@@ -1,0 +1,27 @@
+{
+      "name": "taskly-api",
+      "version": "1.0.0",
+      "description": "",
+      "main": "app.js",
+      "scripts": {
+            "dev": "node app.js"
+      },
+      "repository": {
+            "type": "git",
+            "url": "git+https://github.com/sheygs13/taskly-api.git"
+      },
+      "keywords": [],
+      "author": "",
+      "license": "ISC",
+      "bugs": {
+            "url": "https://github.com/sheygs13/taskly-api/issues"
+      },
+      "homepage": "https://github.com/sheygs13/taskly-api#readme",
+      "dependencies": {
+            "mongodb": "^4.1.4",
+            "mongoose": "^6.0.12"
+      },
+      "devDependencies": {
+            "nodemon": "^2.0.15"
+      }
+}
