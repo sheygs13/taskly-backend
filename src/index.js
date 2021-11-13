@@ -147,7 +147,7 @@ app.get("/api/v1/tasks/:id", (req, res) => {
 
       if (!ObjectId.isValid(_id)) {
             return res.status(400).json({
-                  message: "Provide a valid ID",
+                  error: "Provide a valid ID",
                   status: "fail",
             });
       }
@@ -156,14 +156,14 @@ app.get("/api/v1/tasks/:id", (req, res) => {
             .then((task) => {
                   if (!task) {
                         return res.status(404).json({
-                              message: "No record exist for the provided task ID",
-                              error: "fail",
+                              error: "No record exist for the provided task ID",
+                              status: "fail",
                         });
                   }
                   res.status(200).json({
                         task,
                         message: "Successfully found record that matches task",
-                        status: "fail",
+                        status: "success",
                   });
             })
             .catch(({ message }) => {
