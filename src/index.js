@@ -36,7 +36,7 @@ app.get("/api/v1/users", (req, res) => {
                         ? res.status(200).json({
                                 data: {
                                       users,
-                                      message: "users record successfully spooled",
+                                      message: "Successfully spooled all users record",
                                 },
                                 status: "success",
                           })
@@ -77,7 +77,7 @@ app.get("/api/v1/users/:id", (req, res) => {
                           })
                         : res.status(404).json({
                                 user: {},
-                                error: "Unable to find record at the moment.",
+                                error: "User with the given ID does not exist.",
                                 status: "fail",
                           });
             })
@@ -110,6 +110,64 @@ app.post("/api/v1/tasks", (req, res) => {
             })
             .catch(({ message }) => {
                   res.status(400).json({
+                        error: message,
+                        status: "fail",
+                  });
+            });
+});
+
+app.get("/api/v1/tasks", (req, res) => {
+      Task.find({})
+            .then((tasks) => {
+                  tasks.length
+                        ? res.status(200).json({
+                                data: {
+                                      tasks,
+                                      message: "Successfully spooled all tasks",
+                                },
+                                status: "success",
+                          })
+                        : res.status(200).json({
+                                data: {
+                                      tasks,
+                                      message: "No record exist at the moment.",
+                                },
+                          });
+            })
+            .catch(({ message }) => {
+                  res.status(500).json({
+                        error: message,
+                        status: "fail",
+                  });
+            });
+});
+
+app.get("/api/v1/tasks/:id", (req, res) => {
+      const { id } = req.params;
+
+      if (!ObjectId.isValid(id)) {
+            return res.status(400).json({
+                  message: "Provide a valid ID",
+                  status: "fail",
+            });
+      }
+
+      Task.findOne({ _id: id })
+            .then((task) => {
+                  if (!task) {
+                        return res.status(404).json({
+                              message: "No record exist for the provided task ID",
+                              error: "fail",
+                        });
+                  }
+                  res.status(200).json({
+                        task,
+                        message: "Successfully found record that matches task",
+                        status: "fail",
+                  });
+            })
+            .catch(({ message }) => {
+                  res.status(500).json({
                         error: message,
                         status: "fail",
                   });
