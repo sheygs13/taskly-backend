@@ -2,6 +2,7 @@ require("./db/db");
 const express = require("express");
 const User = require("./models/user");
 const Task = require("./models/task");
+const { ObjectId } = require("mongoose").Types;
 
 const app = express();
 // parse body
@@ -55,13 +56,43 @@ app.get("/api/v1/users", (req, res) => {
             });
 });
 
+app.get("/api/v1/users/:id", (req, res) => {
+      const { id } = req.params;
 
-
+      if (!ObjectId.isValid(id)) {
+            return res.status(400).json({
+                  error: "Provide a valid ID.",
+                  status: "fail",
+            });
+      }
+      User.findOne({ _id: id })
+            .then((user) => {
+                  user
+                        ? res.status(200).json({
+                                data: {
+                                      user,
+                                      message: "Successfully found record that matches user.",
+                                },
+                                status: "success",
+                          })
+                        : res.status(404).json({
+                                user: {},
+                                error: "Unable to find record at the moment.",
+                                status: "fail",
+                          });
+            })
+            .catch(({ message }) => {
+                  res.status(500).json({
+                        error: message,
+                        status: "fail",
+                  });
+            });
+});
 
 app.post("/api/v1/tasks", (req, res) => {
       const { description, completed } = req.body;
       if (!description) {
-            res.status(400).json({
+            return res.status(400).json({
                   error: "description is required",
                   status: "fail",
             });
