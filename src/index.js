@@ -28,6 +28,36 @@ app.post("/api/v1/auth/users", (req, res) => {
             });
 });
 
+app.get("/api/v1/users", (req, res) => {
+      User.find({})
+            .then((users) => {
+                  users.length
+                        ? res.status(200).json({
+                                data: {
+                                      users,
+                                      message: "users record successfully spooled",
+                                },
+                                status: "success",
+                          })
+                        : res.status(200).json({
+                                data: {
+                                      users,
+                                      message: "No record exist at the moment",
+                                },
+                                status: "success",
+                          });
+            })
+            .catch(({ message }) => {
+                  res.status(500).json({
+                        error: message,
+                        status: "fail",
+                  });
+            });
+});
+
+
+
+
 app.post("/api/v1/tasks", (req, res) => {
       const { description, completed } = req.body;
       if (!description) {
