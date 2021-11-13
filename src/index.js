@@ -57,15 +57,15 @@ app.get("/api/v1/users", (req, res) => {
 });
 
 app.get("/api/v1/users/:id", (req, res) => {
-      const { id } = req.params;
+      const { id: _id } = req.params;
 
-      if (!ObjectId.isValid(id)) {
+      if (!ObjectId.isValid(_id)) {
             return res.status(400).json({
                   error: "Provide a valid ID.",
                   status: "fail",
             });
       }
-      User.findOne({ _id: id })
+      User.findOne({ _id })
             .then((user) => {
                   user
                         ? res.status(200).json({
@@ -143,27 +143,27 @@ app.get("/api/v1/tasks", (req, res) => {
 });
 
 app.get("/api/v1/tasks/:id", (req, res) => {
-      const { id } = req.params;
+      const { id: _id } = req.params;
 
-      if (!ObjectId.isValid(id)) {
+      if (!ObjectId.isValid(_id)) {
             return res.status(400).json({
-                  message: "Provide a valid ID",
+                  error: "Provide a valid ID",
                   status: "fail",
             });
       }
 
-      Task.findOne({ _id: id })
+      Task.findOne({ _id })
             .then((task) => {
                   if (!task) {
                         return res.status(404).json({
-                              message: "No record exist for the provided task ID",
-                              error: "fail",
+                              error: "No record exist for the provided task ID",
+                              status: "fail",
                         });
                   }
                   res.status(200).json({
                         task,
                         message: "Successfully found record that matches task",
-                        status: "fail",
+                        status: "success",
                   });
             })
             .catch(({ message }) => {
