@@ -19,15 +19,4 @@ const DB_NAME = "taskly-api";
             });
 })();
 
-const Task = mongoose.model("Task", {
-      description: {
-            type: String,
-            required: true,
-            trim: true,
-      },
-      completed: {
-            type: Boolean,
-            required: true,
-            default: false,
-      },
-});
+
