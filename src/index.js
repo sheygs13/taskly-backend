@@ -93,41 +93,41 @@ app.patch("/api/v1/users/:id", async (req, res) => {
 
       if (!ObjectId.isValid(_id))
             return res.status(400).json({
-                  error: "Provide a valid ID",
+                  error: "Provide a valid ID.",
                   status: "fail",
             });
 
       if (!Object.keys(req.body).length)
             return res.status(400).json({
-                  error: "Fields required for update.",
+                  error: "Input fields required for update.",
                   status: "fail",
             });
 
       const clientUpdates = Object.keys(req.body);
-      
+
       const allowedUpdates = ["email", "password"];
 
-      const isValidOperation = clientUpdates.every((update) =>
-            allowedUpdates.includes(update)
-      );
-
-      if (!isValidOperation)
-            return res.status(403).json({
-                  error: "Update not allowed for this field.",
-                  status: "fail",
-            });
+      const isValid = clientUpdates.every((update) => allowedUpdates.includes(update));
 
       try {
             const user = await User.findByIdAndUpdate(_id, req.body, {
                   new: true,
                   runValidators: true,
             });
+
             if (!user)
                   return res.status(404).json({
                         user,
                         error: "User with the given ID does not exist.",
                         status: "fail",
                   });
+
+            if (!isValid)
+                  return res.status(400).json({
+                        error: "Update not allowed for this field.",
+                        status: "fail",
+                  });
+
             res.status(200).json({
                   data: {
                         user,
