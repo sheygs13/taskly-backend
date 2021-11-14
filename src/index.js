@@ -143,6 +143,32 @@ app.patch("/api/v1/users/:id", async (req, res) => {
       }
 });
 
+app.delete("/api/v1/users/:id", async (req, res) => {
+      const { id: _id } = req.params;
+
+      if (!ObjectId.isValid(_id))
+            return res.status(400).json({ error: "Provide a valid ID", status: "fail" });
+
+      try {
+            const user = await User.findByIdAndDelete(_id);
+            if (!user)
+                  return res.status(404).json({
+                        error: "User with the given ID does not exist",
+                        status: "fail",
+                  });
+            res.status(204).json({
+                  message: "User record successfully deleted",
+                  status: "success",
+            });
+      } catch ({ message }) {
+            res.status(400).json({
+                  error: message,
+                  status: "fail",
+            });
+            return;
+      }
+});
+
 app.post("/api/v1/tasks", async (req, res) => {
       const { description, completed } = req.body;
 
@@ -272,6 +298,28 @@ app.patch("/api/v1/tasks/:id", async (req, res) => {
                   error: message,
                   status: "fail",
             });
+      }
+});
+
+app.delete("/api/v1/tasks/:id", async (req, res) => {
+      const { id: _id } = req.params;
+
+      if (!ObjectId.isValid(_id))
+            return res.status(400).json({ error: "Provide a valid ID", status: "fail" });
+      try {
+            const task = await Task.findByIdAndDelete(_id);
+            if (!task)
+                  return res.status(404).json({
+                        error: "Task with the given ID does not exist",
+                        status: "fail",
+                  });
+            res.status(204).json({
+                  message: "Task record successfully deleted",
+                  status: "success",
+            });
+      } catch ({ message }) {
+            res.status(400).json({ error: message, status: "fail" });
+            return;
       }
 });
 
