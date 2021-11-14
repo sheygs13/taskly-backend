@@ -6,6 +6,11 @@ const User = mongoose.model("User", {
             type: String,
             required: true,
             trim: true,
+            validate(name) {
+                  if (!/^[a-z]{3,}[\s][a-z]{3,}$/i.test(name)) {
+                        throw new Error("Format: firstname lastname");
+                  }
+            },
       },
       age: {
             type: Number,
