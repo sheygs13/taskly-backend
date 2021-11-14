@@ -31,7 +31,7 @@ app.post("/api/v1/auth/users", async (req, res) => {
 app.get("/api/v1/users", async (req, res) => {
       try {
             const users = await User.find({});
-            if (!users.length) {
+            if (!users.length)
                   return res.status(200).json({
                         data: {
                               users,
@@ -39,7 +39,7 @@ app.get("/api/v1/users", async (req, res) => {
                         },
                         status: "success",
                   });
-            }
+
             res.status(200).json({
                   data: {
                         users,
@@ -58,24 +58,21 @@ app.get("/api/v1/users", async (req, res) => {
 app.get("/api/v1/users/:id", async (req, res) => {
       const { id: _id } = req.params;
 
-      if (!ObjectId.isValid(_id)) {
-            res.status(400).json({
+      if (!ObjectId.isValid(_id))
+            return res.status(400).json({
                   error: "Provide a valid ID.",
                   status: "fail",
             });
-            return;
-      }
 
       try {
             const user = await User.findOne({ _id });
-            if (!user) {
-                  res.status(404).json({
+            if (!user)
+                  return res.status(404).json({
                         user,
                         error: "User with the given ID does not exist.",
                         status: "fail",
                   });
-                  return;
-            }
+
             res.status(200).json({
                   data: {
                         user,
@@ -85,6 +82,61 @@ app.get("/api/v1/users/:id", async (req, res) => {
             });
       } catch ({ message }) {
             res.status(500).json({
+                  error: message,
+                  status: "fail",
+            });
+      }
+});
+
+app.patch("/api/v1/users/:id", async (req, res) => {
+      const { id: _id } = req.params;
+
+      if (!ObjectId.isValid(_id))
+            return res.status(400).json({
+                  error: "Provide a valid ID",
+                  status: "fail",
+            });
+
+      if (!Object.keys(req.body).length)
+            return res.status(400).json({
+                  error: "Fields required for update.",
+                  status: "fail",
+            });
+
+      const clientUpdates = Object.keys(req.body);
+      
+      const allowedUpdates = ["email", "password"];
+
+      const isValidOperation = clientUpdates.every((update) =>
+            allowedUpdates.includes(update)
+      );
+
+      if (!isValidOperation)
+            return res.status(403).json({
+                  error: "Update not allowed for this field.",
+                  status: "fail",
+            });
+
+      try {
+            const user = await User.findByIdAndUpdate(_id, req.body, {
+                  new: true,
+                  runValidators: true,
+            });
+            if (!user)
+                  return res.status(404).json({
+                        user,
+                        error: "User with the given ID does not exist.",
+                        status: "fail",
+                  });
+            res.status(200).json({
+                  data: {
+                        user,
+                        message: "User details successfully updated",
+                  },
+                  status: "success",
+            });
+      } catch ({ message }) {
+            return res.status(400).json({
                   error: message,
                   status: "fail",
             });
@@ -115,16 +167,15 @@ app.post("/api/v1/tasks", async (req, res) => {
 app.get("/api/v1/tasks", async (req, res) => {
       try {
             const tasks = await Task.find({});
-            if (!tasks.length) {
-                  res.status(200).json({
+            if (!tasks.length)
+                  return res.status(200).json({
                         data: {
                               tasks,
                               message: "No record exist at the moment.",
                         },
                         status: "success",
                   });
-                  return;
-            }
+
             res.status(200).json({
                   data: {
                         tasks,
@@ -143,12 +194,12 @@ app.get("/api/v1/tasks", async (req, res) => {
 app.get("/api/v1/tasks/:id", async (req, res) => {
       const { id: _id } = req.params;
 
-      if (!ObjectId.isValid(_id)) {
+      if (!ObjectId.isValid(_id))
             return res.status(400).json({
                   error: "Provide a valid ID",
                   status: "fail",
             });
-      }
+
       try {
             const task = await Task.findOne({ _id });
             if (!task)
@@ -171,4 +222,4 @@ app.get("/api/v1/tasks/:id", async (req, res) => {
 
 const port = process.env.PORT || 3000;
 
-app.listen(port, () => console.log(`App listening on port ${port}...`));
+app.listen(port, () => console.log(`Server listening on port ${port}...`));
