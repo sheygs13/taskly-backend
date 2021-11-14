@@ -124,7 +124,7 @@ app.patch("/api/v1/users/:id", async (req, res) => {
 
             if (!isValid)
                   return res.status(400).json({
-                        error: "Update not allowed for this field.",
+                        error: "Invalid update.",
                         status: "fail",
                   });
 
@@ -217,6 +217,61 @@ app.get("/api/v1/tasks/:id", async (req, res) => {
                   status: "fail",
             });
             return;
+      }
+});
+
+app.patch("/api/v1/tasks/:id", async (req, res) => {
+      const { id: _id } = req.params;
+
+      if (!ObjectId.isValid(_id))
+            return res.status(400).json({
+                  error: "Provide a valid ID",
+                  status: "fail",
+            });
+
+      const clientUpdates = Object.keys(req.body);
+      const allowedUpdates = ["description", "completed"];
+
+      const isValidOperation = clientUpdates.every((update) =>
+            allowedUpdates.includes(update)
+      );
+
+      if (!isValidOperation)
+            return res.status(400).json({
+                  error: "Invalid update.",
+                  status: "fail",
+            });
+
+      try {
+            const task = await Task.findByIdAndUpdate(_id, req.body, {
+                  new: true,
+                  runValidators: true,
+            });
+
+            if (!task)
+                  return res.status(404).json({
+                        error: "Task with the given ID does not eixst",
+                        status: "fail",
+                  });
+
+            if (!Object.keys(req.body).length)
+                  return res.status(400).json({
+                        error: "Input field(s) is/are required",
+                        status: "fail",
+                  });
+
+            res.status(200).json({
+                  data: {
+                        task,
+                        message: "Task details successfully updated",
+                  },
+                  status: "success",
+            });
+      } catch ({ message }) {
+            return res.status(400).json({
+                  error: message,
+                  status: "fail",
+            });
       }
 });
 

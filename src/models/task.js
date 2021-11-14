@@ -8,7 +8,7 @@ const Task = mongoose.model("Task", {
             validate(val) {
                   if (val.length < 3 || val.length > 40) {
                         throw new Error(
-                              "Description is lower than the required length or exceeds the maximum allowed length"
+                              "Lower than the minimum allowed length(3)|exceeds the maximum allowed length(40)"
                         );
                   }
             },
