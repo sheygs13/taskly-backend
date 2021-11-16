@@ -98,10 +98,7 @@ const updateTask = async (req, res) => {
             });
 
       try {
-            const task = await Task.findByIdAndUpdate(_id, req.body, {
-                  new: true,
-                  runValidators: true,
-            });
+            const task = await Task.findById(_id);
 
             if (!task)
                   return res.status(404).json({
@@ -114,6 +111,11 @@ const updateTask = async (req, res) => {
                         error: "Input field(s) is/are required",
                         status: "fail",
                   });
+
+            // update
+            clientUpdates.forEach((update) => (task[update] = req.body[update]));
+
+            await task.save();
 
             res.status(200).json({
                   data: {

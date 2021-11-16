@@ -2,8 +2,10 @@ const User = require("../models/user");
 const { ObjectId } = require("mongoose").Types;
 
 const createUser = async (req, res) => {
-      const { name, age, email, password } = req.body;
-      const user = new User({ name, age, email, password });
+      const { name, email, password } = req.body;
+      // check if the email exist
+      // if it does not, create the user
+      const user = new User({ name, email, password });
       try {
             await user.save();
             res.status(201).json({
@@ -20,6 +22,35 @@ const createUser = async (req, res) => {
             });
       }
 };
+
+const loginUser = async (req, res) => {
+      const { email, password } = req.body;
+      // if the email does not exist, flag the user
+      // if the password does not match the db password, flag the user
+
+      try {
+            const user = await User.verifyEmailPassword(email, password);
+
+            if (!user)
+                  return res.status(400).json({
+                        error: "Unable to login user",
+                        status: "fail",
+                  });
+            res.status(200).json({
+                  data: {
+                        user,
+                        message: "User successfully logged in.",
+                        status: "success",
+                  },
+            });
+      } catch ({ message }) {
+            res.status(400).json({
+                  error: message,
+                  status: "fail",
+            });
+      }
+};
+
 const getSingleUser = async (req, res) => {
       const { id: _id } = req.params;
 
@@ -89,7 +120,7 @@ const updateUser = async (req, res) => {
 
       if (!Object.keys(req.body).length)
             return res.status(400).json({
-                  error: "Input fields required for update.",
+                  error: "Input fields are required.",
                   status: "fail",
             });
 
@@ -100,10 +131,7 @@ const updateUser = async (req, res) => {
       const isValid = clientUpdates.every((update) => allowedUpdates.includes(update));
 
       try {
-            const user = await User.findByIdAndUpdate(_id, req.body, {
-                  new: true,
-                  runValidators: true,
-            });
+            const user = await User.findById(_id);
 
             if (!user)
                   return res.status(404).json({
@@ -117,6 +145,12 @@ const updateUser = async (req, res) => {
                         error: "Invalid update.",
                         status: "fail",
                   });
+
+            for (const update of clientUpdates) {
+                  user[update] = req.body[update];
+            }
+
+            await user.save();
 
             res.status(200).json({
                   data: {
@@ -160,6 +194,7 @@ const deleteUser = async (req, res) => {
 
 const UserController = {
       createUser,
+      loginUser,
       getSingleUser,
       getAllUsers,
       updateUser,
