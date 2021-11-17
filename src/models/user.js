@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const { isEmail } = require("validator/validator");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const userSchema = new mongoose.Schema({
       name: {
@@ -31,27 +32,57 @@ const userSchema = new mongoose.Schema({
             trim: true,
             required: true,
             minLength: 6,
-            maxLength: 30,
             validate(pwd) {
                   if (pwd.includes("password")) {
                         throw new Error("Not an allowed password");
                   }
             },
       },
+
+      tokens: [
+            {
+                  token: {
+                        type: String,
+                        required: true,
+                  },
+            },
+      ],
 });
 
 userSchema.statics.verifyEmailPassword = async (email, password) => {
-      const user = await User.findOne({ email });
-      if (!user) {
-            throw new Error("Invalid Email");
-      }
+      try {
+            const user = await User.findOne({ email });
+            if (!user) {
+                  throw new Error("Invalid Email");
+            }
 
-      const validPassword = await bcrypt.compare(password, user.password);
+            const validPassword = await bcrypt.compare(password, user.password);
 
-      if (!validPassword) {
-            throw new Error("Invalid Password");
+            if (!validPassword) {
+                  throw new Error("Invalid Password");
+            }
+            return user;
+      } catch ({ message }) {
+            throw new Error(message);
       }
-      return user;
+};
+
+userSchema.methods.generateAuthToken = async function () {
+      try {
+            // console.log("typeof", typeof this._id);
+            // this - user;
+            const token = jwt.sign({ _id: String(this._id) }, "trojan", {
+                  expiresIn: "1 hr",
+            });
+
+            this.tokens = [...this.tokens, { token }];
+
+            await this.save();
+
+            return token;
+      } catch ({ message }) {
+            throw new Error(message);
+      }
 };
 
 userSchema.pre("save", async function (next) {

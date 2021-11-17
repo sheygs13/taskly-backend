@@ -8,9 +8,11 @@ const createUser = async (req, res) => {
       const user = new User({ name, email, password });
       try {
             await user.save();
+            const token = await user.generateAuthToken();
             res.status(201).json({
                   data: {
                         user,
+                        token,
                         message: "User account successfully created",
                   },
                   status: "success",
@@ -36,12 +38,14 @@ const loginUser = async (req, res) => {
                         error: "Unable to login user",
                         status: "fail",
                   });
+            const token = await user.generateAuthToken();
             res.status(200).json({
                   data: {
                         user,
+                        token,
                         message: "User successfully logged in.",
-                        status: "success",
                   },
+                  status: "success",
             });
       } catch ({ message }) {
             res.status(400).json({
