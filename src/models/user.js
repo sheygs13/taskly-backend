@@ -1,6 +1,9 @@
 const mongoose = require("mongoose");
+
 const { isEmail } = require("validator/validator");
+
 const bcrypt = require("bcryptjs");
+
 const jwt = require("jsonwebtoken");
 
 const userSchema = new mongoose.Schema({

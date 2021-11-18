@@ -1,7 +1,8 @@
 const jwt = require("jsonwebtoken");
+
 const User = require("../models/user");
 
-const authMiddleWare = async (req, res, next) => {
+const verifyAuthToken = async (req, res, next) => {
       const authHeader = req.header("Authorization");
 
       if (typeof authHeader === "undefined") {
@@ -30,4 +31,4 @@ const authMiddleWare = async (req, res, next) => {
       }
 };
 
-module.exports = authMiddleWare;
+module.exports = verifyAuthToken;
