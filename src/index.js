@@ -6,6 +6,13 @@ const taskRoute = require("./routes/task.route");
 const app = express();
 const port = process.env.PORT || 3000;
 
+// app.use("/", (req, res, next) => {
+//       res.status(503).json({
+//             message: "This site is under maintenance. Please try again later.",
+//       });
+//      // next();
+// });
+
 // parse request body
 app.use(express.json());
 

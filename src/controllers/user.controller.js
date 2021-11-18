@@ -87,22 +87,12 @@ const getSingleUser = async (req, res) => {
             });
       }
 };
-const getAllUsers = async (req, res) => {
+const getUserProfile = async (req, res) => {
       try {
-            const users = await User.find({});
-            if (!users.length)
-                  return res.status(200).json({
-                        data: {
-                              users,
-                              message: "No record exist at the moment.",
-                        },
-                        status: "success",
-                  });
-
             res.status(200).json({
                   data: {
-                        users,
-                        message: "Successfully spooled all users record.",
+                        user: req.user,
+                        message: "Successfully spooled my profile.",
                   },
                   status: "success",
             });
@@ -200,7 +190,7 @@ const UserController = {
       createUser,
       loginUser,
       getSingleUser,
-      getAllUsers,
+      getUserProfile,
       updateUser,
       deleteUser,
 };
