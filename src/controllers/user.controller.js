@@ -1,6 +1,6 @@
 const User = require("../models/user");
 
-const { ObjectId } = require("mongoose").Types;
+const Helpers = require("../utils/helpers");
 
 const createUser = async (req, res) => {
       const { name, email, password } = req.body;
@@ -12,7 +12,7 @@ const createUser = async (req, res) => {
             const token = await user.generateAuthToken();
             res.status(201).json({
                   data: {
-                        user,
+                        user: Helpers.getPublicProfile(user),
                         token,
                         message: "User account successfully created",
                   },
@@ -26,7 +26,7 @@ const createUser = async (req, res) => {
       }
 };
 
-const loginUser = async (req, res) => {
+const logInUser = async (req, res) => {
       const { email, password } = req.body;
       // if the email does not exist, flag the user
       // if the password does not match the db password, flag the user
@@ -42,7 +42,7 @@ const loginUser = async (req, res) => {
             const token = await user.generateAuthToken();
             res.status(200).json({
                   data: {
-                        user,
+                        user: Helpers.getPublicProfile(user),
                         token,
                         message: "User successfully logged in.",
                   },
@@ -56,43 +56,44 @@ const loginUser = async (req, res) => {
       }
 };
 
-const getSingleUser = async (req, res) => {
-      const { id: _id } = req.params;
-
-      if (!ObjectId.isValid(_id))
-            return res.status(400).json({
-                  error: "Provide a valid ID.",
-                  status: "fail",
-            });
-
+// logout from individual session
+const logOutUser = async (req, res) => {
       try {
-            const user = await User.findOne({ _id });
-            if (!user)
-                  return res.status(404).json({
-                        user,
-                        error: "User with the given ID does not exist.",
-                        status: "fail",
-                  });
-
+            // delete the session token from the tokens array
+            req.user.tokens = req.user.tokens.filter(
+                  (tokenObj) => tokenObj.token !== req.token
+            );
+            await req.user.save();
             res.status(200).json({
-                  data: {
-                        user,
-                        message: "Successfully found record that matches user.",
-                  },
+                  message: "Successfully logged out.",
                   status: "success",
             });
       } catch ({ message }) {
-            res.status(500).json({
-                  error: message,
-                  status: "fail",
-            });
+            res.status(500).json({ error: message, status: "fail" });
+            return;
       }
 };
+
+// logout from all sessions
+const logOutUserAll = async (req, res) => {
+      try {
+            req.user.tokens = [];
+            await req.user.save();
+            res.status(200).json({
+                  message: "Successfully logged out from all sessions",
+                  status: "success",
+            });
+      } catch ({ message }) {
+            res.status(500).json({ error: message, status: "fail" });
+            return;
+      }
+};
+
 const getUserProfile = async (req, res) => {
       try {
             res.status(200).json({
                   data: {
-                        user: req.user,
+                        user: Helpers.getPublicProfile(req.user),
                         message: "Successfully spooled my profile.",
                   },
                   status: "success",
@@ -104,53 +105,29 @@ const getUserProfile = async (req, res) => {
             });
       }
 };
-const updateUser = async (req, res) => {
-      const { id: _id } = req.params;
 
-      if (!ObjectId.isValid(_id))
-            return res.status(400).json({
-                  error: "Provide a valid ID.",
-                  status: "fail",
-            });
-
-      if (!Object.keys(req.body).length)
-            return res.status(400).json({
-                  error: "Input fields are required.",
-                  status: "fail",
-            });
-
-      const clientUpdates = Object.keys(req.body);
-
-      const allowedUpdates = ["email", "password"];
-
-      const isValid = clientUpdates.every((update) => allowedUpdates.includes(update));
-
+const updateUserProfile = async (req, res) => {
       try {
-            const user = await User.findById(_id);
-
-            if (!user)
-                  return res.status(404).json({
-                        user,
-                        error: "User with the given ID does not exist.",
+            if (!Object.keys(req.body).length)
+                  return res.status(400).json({
+                        error: "Input fields are required.",
                         status: "fail",
                   });
 
-            if (!isValid)
+            if (!Helpers.allowedUpdates(req.body))
                   return res.status(400).json({
                         error: "Invalid update.",
                         status: "fail",
                   });
 
-            for (const update of clientUpdates) {
-                  user[update] = req.body[update];
-            }
+            Helpers.updateProfile(req.user, req.body);
 
-            await user.save();
+            await req.user.save();
 
             res.status(200).json({
                   data: {
-                        user,
-                        message: "User details successfully updated",
+                        user: Helpers.getPublicProfile(req.user),
+                        message: "User profile successfully updated",
                   },
                   status: "success",
             });
@@ -161,21 +138,13 @@ const updateUser = async (req, res) => {
             });
       }
 };
-const deleteUser = async (req, res) => {
-      const { id: _id } = req.params;
 
-      if (!ObjectId.isValid(_id))
-            return res.status(400).json({ error: "Provide a valid ID", status: "fail" });
-
+const deleteUserProfile = async (req, res) => {
       try {
-            const user = await User.findByIdAndDelete(_id);
-            if (!user)
-                  return res.status(404).json({
-                        error: "User with the given ID does not exist",
-                        status: "fail",
-                  });
+            await User.findByIdAndDelete(req.user._id);
+
             res.status(204).json({
-                  message: "User record successfully deleted",
+                  message: "User profile has successfully been deleted",
                   status: "success",
             });
       } catch ({ message }) {
@@ -189,11 +158,12 @@ const deleteUser = async (req, res) => {
 
 const UserController = {
       createUser,
-      loginUser,
-      getSingleUser,
+      logInUser,
+      logOutUser,
+      logOutUserAll,
       getUserProfile,
-      updateUser,
-      deleteUser,
+      updateUserProfile,
+      deleteUserProfile,
 };
 
 module.exports = UserController;

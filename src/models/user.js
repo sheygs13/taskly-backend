@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema({
                   }
             },
       },
-
+      // extra validation
       password: {
             type: String,
             trim: true,

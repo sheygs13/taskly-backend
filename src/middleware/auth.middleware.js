@@ -23,10 +23,15 @@ const verifyAuthToken = async (req, res, next) => {
             const decoded = jwt.verify(token, "trojan");
             // ensure that the user id and token exists
             const user = await User.findOne({ _id: decoded._id, "tokens.token": token });
+            // console.log({ user });
+            if (!user) {
+                  throw new Error("Invalid Authentication.");
+            }
             req.user = user;
+            req.token = token;
             next();
       } catch ({ message }) {
-            res.status(400).json({ error: message, status: "fail" });
+            res.status(401).json({ error: message, status: "fail" });
             return;
       }
 };
