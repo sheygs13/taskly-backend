@@ -35,9 +35,10 @@ const userSchema = new mongoose.Schema({
             trim: true,
             required: true,
             minLength: 6,
+            maxLength: 255,
             validate(pwd) {
-                  if (pwd.includes("password")) {
-                        throw new Error("Not an allowed password");
+                  if (pwd.length < 6 || pwd.length > 255) {
+                        throw new Error("Password not within range");
                   }
             },
       },

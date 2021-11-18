@@ -1,28 +1,24 @@
 const User = require("../models/user");
-
-const Helpers = require("../utils/helpers");
+const Helpers = require("../helpers/helpers");
 
 const createUser = async (req, res) => {
       const { name, email, password } = req.body;
-      // check if the email exist
-      // if it does not, create the user
+
       const user = new User({ name, email, password });
+
       try {
             await user.save();
+
             const token = await user.generateAuthToken();
-            res.status(201).json({
-                  data: {
-                        user: Helpers.getPublicProfile(user),
-                        token,
-                        message: "User account successfully created",
-                  },
-                  status: "success",
+
+            Helpers.handleSuccessResponse(res, 201, {
+                  user: Helpers.getPublicProfile(user),
+                  token,
+                  message: "Successfully created",
             });
       } catch ({ message }) {
-            return res.status(400).json({
-                  error: message,
-                  status: "fail",
-            });
+            Helpers.handleErrorResponse(res, 400, message);
+            return;
       }
 };
 
@@ -35,24 +31,18 @@ const logInUser = async (req, res) => {
             const user = await User.verifyEmailPassword(email, password);
 
             if (!user)
-                  return res.status(400).json({
-                        error: "Unable to login user",
-                        status: "fail",
-                  });
+                  return Helpers.handleErrorResponse(res, 400, "Unable to login user");
+
             const token = await user.generateAuthToken();
-            res.status(200).json({
-                  data: {
-                        user: Helpers.getPublicProfile(user),
-                        token,
-                        message: "User successfully logged in.",
-                  },
-                  status: "success",
+
+            Helpers.handleSuccessResponse(res, 200, {
+                  user: Helpers.getPublicProfile(user),
+                  token,
+                  message: "Successfully logged in.",
             });
       } catch ({ message }) {
-            res.status(400).json({
-                  error: message,
-                  status: "fail",
-            });
+            Helpers.handleErrorResponse(res, 400, message);
+            return;
       }
 };
 
@@ -60,16 +50,16 @@ const logInUser = async (req, res) => {
 const logOutUser = async (req, res) => {
       try {
             // delete the session token from the tokens array
-            req.user.tokens = req.user.tokens.filter(
-                  (tokenObj) => tokenObj.token !== req.token
-            );
+            req.user.tokens = Helpers.removeSessionTokens(req.user.tokens, req.token);
+
             await req.user.save();
-            res.status(200).json({
-                  message: "Successfully logged out.",
-                  status: "success",
+
+            Helpers.handleSuccessResponse(res, 200, {
+                  user: Helpers.getPublicProfile(req.user),
+                  message: "Logged out successfully",
             });
       } catch ({ message }) {
-            res.status(500).json({ error: message, status: "fail" });
+            Helpers.handleErrorResponse(res, 500, message);
             return;
       }
 };
@@ -78,64 +68,53 @@ const logOutUser = async (req, res) => {
 const logOutUserAll = async (req, res) => {
       try {
             req.user.tokens = [];
+
             await req.user.save();
+
             res.status(200).json({
                   message: "Successfully logged out from all sessions",
                   status: "success",
             });
       } catch ({ message }) {
-            res.status(500).json({ error: message, status: "fail" });
+            Helpers.handleErrorResponse(res, 500, message);
             return;
       }
 };
 
 const getUserProfile = async (req, res) => {
       try {
-            res.status(200).json({
-                  data: {
-                        user: Helpers.getPublicProfile(req.user),
-                        message: "Successfully spooled my profile.",
-                  },
-                  status: "success",
+            Helpers.handleSuccessResponse(res, 200, {
+                  user: Helpers.getPublicProfile(req.user),
+                  message: "Spooled successfully",
             });
       } catch ({ message }) {
-            res.status(500).json({
-                  error: message,
-                  status: "fail",
-            });
+            Helpers.handleErrorResponse(res, 500, message);
+            return;
       }
 };
 
 const updateUserProfile = async (req, res) => {
       try {
-            if (!Object.keys(req.body).length)
-                  return res.status(400).json({
-                        error: "Input fields are required.",
-                        status: "fail",
-                  });
+            if (!Helpers.hasBody(req.body))
+                  return Helpers.handleErrorResponse(
+                        res,
+                        400,
+                        "Request fields are required"
+                  );
 
             if (!Helpers.allowedUpdates(req.body))
-                  return res.status(400).json({
-                        error: "Invalid update.",
-                        status: "fail",
-                  });
+                  return Helpers.handleErrorResponse(res, 400, "Invalid update.");
 
             Helpers.updateProfile(req.user, req.body);
 
             await req.user.save();
 
-            res.status(200).json({
-                  data: {
-                        user: Helpers.getPublicProfile(req.user),
-                        message: "User profile successfully updated",
-                  },
-                  status: "success",
+            Helpers.handleSuccessResponse(res, 200, {
+                  user: Helpers.getPublicProfile(req.user),
+                  message: "Successfully updated",
             });
       } catch ({ message }) {
-            return res.status(400).json({
-                  error: message,
-                  status: "fail",
-            });
+            return Helpers.handleErrorResponse(res, 500, message);
       }
 };
 
@@ -148,11 +127,7 @@ const deleteUserProfile = async (req, res) => {
                   status: "success",
             });
       } catch ({ message }) {
-            res.status(400).json({
-                  error: message,
-                  status: "fail",
-            });
-            return;
+            return Helpers.handleErrorResponse(res, 400, message);
       }
 };
 
