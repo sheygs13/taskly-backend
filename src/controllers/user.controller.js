@@ -12,7 +12,7 @@ const createUser = async (req, res) => {
             const token = await user.generateAuthToken();
 
             Helpers.handleSuccessResponse(res, 201, {
-                  user: Helpers.getPublicProfile(user),
+                  user: Helpers.trimPublicProfile(user),
                   token,
                   message: "Successfully created",
             });
@@ -36,7 +36,7 @@ const logInUser = async (req, res) => {
             const token = await user.generateAuthToken();
 
             Helpers.handleSuccessResponse(res, 200, {
-                  user: Helpers.getPublicProfile(user),
+                  user: Helpers.trimPublicProfile(user),
                   token,
                   message: "Successfully logged in.",
             });
@@ -55,7 +55,7 @@ const logOutUser = async (req, res) => {
             await req.user.save();
 
             Helpers.handleSuccessResponse(res, 200, {
-                  user: Helpers.getPublicProfile(req.user),
+                  user: Helpers.trimPublicProfile(req.user),
                   message: "Logged out successfully",
             });
       } catch ({ message }) {
@@ -84,7 +84,7 @@ const logOutUserAll = async (req, res) => {
 const getUserProfile = async (req, res) => {
       try {
             Helpers.handleSuccessResponse(res, 200, {
-                  user: Helpers.getPublicProfile(req.user),
+                  user: Helpers.trimPublicProfile(req.user),
                   message: "Spooled successfully",
             });
       } catch ({ message }) {
@@ -110,7 +110,7 @@ const updateUserProfile = async (req, res) => {
             await req.user.save();
 
             Helpers.handleSuccessResponse(res, 200, {
-                  user: Helpers.getPublicProfile(req.user),
+                  user: Helpers.trimPublicProfile(req.user),
                   message: "Successfully updated",
             });
       } catch ({ message }) {
