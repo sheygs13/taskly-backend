@@ -1,4 +1,4 @@
-const getPublicProfile = ({ _id, email, name }) => ({ _id, email, name });
+const trimPublicProfile = ({ _id, email, name }) => ({ _id, email, name });
 
 const allowedUpdates = (req = {}) => {
       const clientUpdates = Object.keys(req);
