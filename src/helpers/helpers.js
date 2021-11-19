@@ -38,7 +38,7 @@ const handleErrorResponse = (res, statusCode, errorMessage = "") => {
 const hasBody = (obj = {}) => Object.keys(obj).length;
 
 module.exports = {
-      getPublicProfile,
+      trimPublicProfile,
 
       handleErrorResponse,
 
