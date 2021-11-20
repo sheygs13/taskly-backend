@@ -8,12 +8,10 @@ const createTask = async (req, res) => {
       const task = new Task({ description, completed, author: req.user._id });
       try {
             await task.save();
-            res.status(201).json({
-                  data: {
-                        task,
-                        message: "Task successfully created",
-                  },
-                  status: "success",
+
+            Helpers.handleSuccessResponse(res, 201, {
+                  task,
+                  message: "Successfully created.",
             });
       } catch ({ message }) {
             return Helpers.handleErrorResponse(res, 400, message);
@@ -27,13 +25,12 @@ const getSingleTask = async (req, res) => {
 
       try {
             const task = await Task.findOne({ _id, author: req.user._id });
+
             if (!task) return Helpers.handleErrorResponse(res, 404, "No record exist.");
-            res.status(200).json({
-                  data: {
-                        task,
-                        message: "Successfully found record that matches task.",
-                  },
-                  status: "success",
+
+            Helpers.handleSuccessResponse(res, 200, {
+                  task,
+                  message: "Successfully found record.",
             });
       } catch ({ message }) {
             return Helpers.handleErrorResponse(res, 500, message);
@@ -42,21 +39,16 @@ const getSingleTask = async (req, res) => {
 const getAllTasks = async (req, res) => {
       try {
             const tasks = await Task.find({ author: req.user._id });
+
             if (!tasks.length)
-                  return res.status(200).json({
-                        data: {
-                              tasks,
-                              message: "No record exist at the moment.",
-                        },
-                        status: "success",
+                  return Helpers.handleSuccessResponse(res, 200, {
+                        tasks,
+                        message: "No record exist for the moment.",
                   });
 
-            res.status(200).json({
-                  data: {
-                        tasks,
-                        message: "Successfully spooled all tasks",
-                  },
-                  status: "success",
+            return Helpers.handleSuccessResponse(res, 200, {
+                  tasks,
+                  message: "Successfully spooled all tasks",
             });
       } catch ({ message }) {
             return Helpers.handleErrorResponse(res, 500, message);
@@ -87,12 +79,9 @@ const updateTask = async (req, res) => {
 
             await task.save();
 
-            res.status(200).json({
-                  data: {
-                        task,
-                        message: "Task details successfully updated",
-                  },
-                  status: "success",
+            Helpers.handleSuccessResponse(res, 200, {
+                  task,
+                  message: "Task successfully updated.",
             });
       } catch ({ message }) {
             return Helpers.handleErrorResponse(res, 400, message);
@@ -108,10 +97,7 @@ const deleteTask = async (req, res) => {
 
             if (!task) return Helpers.handleErrorResponse(res, 404, "Task not found.");
 
-            res.status(204).json({
-                  message: "Task record successfully deleted",
-                  status: "success",
-            });
+            Helpers.handleSuccessResponse(res, 204, {});
       } catch ({ message }) {
             return Helpers.handleErrorResponse(res, 500, message);
       }

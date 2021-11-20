@@ -1,11 +1,7 @@
 const mongoose = require("mongoose");
-
 const { isEmail } = require("validator/validator");
-
 const bcrypt = require("bcryptjs");
-
 const jwt = require("jsonwebtoken");
-
 const Task = require("./task");
 
 const userSchema = new mongoose.Schema({
