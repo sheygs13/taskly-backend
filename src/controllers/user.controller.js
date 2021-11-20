@@ -102,10 +102,10 @@ const updateUserProfile = async (req, res) => {
                         "Request fields are required"
                   );
 
-            if (!Helpers.allowedUpdates(req.body))
+            if ((!Helpers.allowedUpdates(req.body), "user"))
                   return Helpers.handleErrorResponse(res, 400, "Invalid update.");
 
-            Helpers.updateProfile(req.user, req.body);
+            Helpers.updateRecord(req.user, req.body);
 
             await req.user.save();
 

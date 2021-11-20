@@ -1,10 +1,11 @@
 const Task = require("../models/task");
 const { ObjectId } = require("mongoose").Types;
+const Helpers = require("../helpers/helpers");
 
 const createTask = async (req, res) => {
       const { description, completed } = req.body;
 
-      const task = new Task({ description, completed });
+      const task = new Task({ description, completed, author: req.user._id });
       try {
             await task.save();
             res.status(201).json({
@@ -15,43 +16,32 @@ const createTask = async (req, res) => {
                   status: "success",
             });
       } catch ({ message }) {
-            res.status(400).json({
-                  error: message,
-                  status: "fail",
-            });
+            return Helpers.handleErrorResponse(res, 400, message);
       }
 };
 const getSingleTask = async (req, res) => {
       const { id: _id } = req.params;
 
       if (!ObjectId.isValid(_id))
-            return res.status(400).json({
-                  error: "Provide a valid ID",
-                  status: "fail",
-            });
+            return Helpers.handleErrorResponse(res, 400, "Provide a valid Id.");
 
       try {
-            const task = await Task.findOne({ _id });
-            if (!task)
-                  return res.status(404).json({
-                        error: "No record exist for the requested ID",
-                        status: "fail",
-                  });
+            const task = await Task.findOne({ _id, author: req.user._id });
+            if (!task) return Helpers.handleErrorResponse(res, 404, "No record exist.");
             res.status(200).json({
-                  task,
-                  message: "Successfully found record that matches task.",
+                  data: {
+                        task,
+                        message: "Successfully found record that matches task.",
+                  },
+                  status: "success",
             });
       } catch ({ message }) {
-            res.status(500).json({
-                  error: message,
-                  status: "fail",
-            });
-            return;
+            return Helpers.handleErrorResponse(res, 500, message);
       }
 };
 const getAllTasks = async (req, res) => {
       try {
-            const tasks = await Task.find({});
+            const tasks = await Task.find({ author: req.user._id });
             if (!tasks.length)
                   return res.status(200).json({
                         data: {
@@ -69,51 +59,31 @@ const getAllTasks = async (req, res) => {
                   status: "success",
             });
       } catch ({ message }) {
-            res.status(500).json({
-                  error: message,
-                  status: "fail",
-            });
+            return Helpers.handleErrorResponse(res, 500, message);
       }
 };
 const updateTask = async (req, res) => {
       const { id: _id } = req.params;
 
       if (!ObjectId.isValid(_id))
-            return res.status(400).json({
-                  error: "Provide a valid ID",
-                  status: "fail",
-            });
-
-      const clientUpdates = Object.keys(req.body);
-      const allowedUpdates = ["description", "completed"];
-
-      const isValidOperation = clientUpdates.every((update) =>
-            allowedUpdates.includes(update)
-      );
-
-      if (!isValidOperation)
-            return res.status(400).json({
-                  error: "Invalid update.",
-                  status: "fail",
-            });
+            return Helpers.handleErrorResponse(res, 400, "Provide a valid Id.");
 
       try {
-            const task = await Task.findById(_id);
+            const task = await Task.findOne({ _id, author: req.user._id });
 
-            if (!task)
-                  return res.status(404).json({
-                        error: "Task with the given ID does not eixst",
-                        status: "fail",
-                  });
+            if (!task) return Helpers.handleErrorResponse(res, 404, "Task not found.");
 
-            if (!Object.keys(req.body).length)
-                  return res.status(400).json({
-                        error: "Input field(s) is/are required",
-                        status: "fail",
-                  });
+            if (!Helpers.hasBody(req.body))
+                  return Helpers.handleErrorResponse(
+                        res,
+                        400,
+                        "Request fields are required."
+                  );
 
-            // update
-            clientUpdates.forEach((update) => (task[update] = req.body[update]));
+            if (!Helpers.allowedUpdates(req.body, "task"))
+                  return Helpers.handleErrorResponse(res, 400, "Invalid update.");
+
+            Helpers.updateRecord(task, req.body);
 
             await task.save();
 
@@ -125,31 +95,25 @@ const updateTask = async (req, res) => {
                   status: "success",
             });
       } catch ({ message }) {
-            return res.status(400).json({
-                  error: message,
-                  status: "fail",
-            });
+            return Helpers.handleErrorResponse(res, 400, message);
       }
 };
 const deleteTask = async (req, res) => {
       const { id: _id } = req.params;
 
       if (!ObjectId.isValid(_id))
-            return res.status(400).json({ error: "Provide a valid ID", status: "fail" });
+            return Helpers.handleErrorResponse(res, 400, "Provide a valid Id.");
       try {
-            const task = await Task.findByIdAndDelete(_id);
-            if (!task)
-                  return res.status(404).json({
-                        error: "Task with the given ID does not exist",
-                        status: "fail",
-                  });
+            const task = await Task.findOneAndDelete({ _id, author: req.user._id });
+
+            if (!task) return Helpers.handleErrorResponse(res, 404, "Task not found.");
+
             res.status(204).json({
                   message: "Task record successfully deleted",
                   status: "success",
             });
       } catch ({ message }) {
-            res.status(400).json({ error: message, status: "fail" });
-            return;
+            return Helpers.handleErrorResponse(res, 500, message);
       }
 };
 
