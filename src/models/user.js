@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const { isEmail } = require("validator/validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const Task = require("./task");
+// const Task = require("./task");
 
 const userSchema = new mongoose.Schema({
       name: {
@@ -104,10 +104,10 @@ userSchema.pre("save", async function (next) {
 });
 
 // delete tasks when user is removed
-userSchema.pre("remove", async function (next) {
-      await Task.deleteMany({ author: this._id });
-      next();
-});
+// userSchema.pre("remove", async function (next) {
+//       await Task.deleteMany({ author: this._id });
+//       next();
+// });
 
 const User = mongoose.model("User", userSchema);
 

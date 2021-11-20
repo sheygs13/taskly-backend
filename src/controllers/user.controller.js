@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const Helpers = require("../helpers/helpers");
+const Task = require("../models/task");
 
 const createUser = async (req, res) => {
       const { name, email, password } = req.body;
@@ -113,8 +114,10 @@ const updateUserProfile = async (req, res) => {
 };
 
 const deleteUserProfile = async (req, res) => {
+      const { _id } = req.user;
       try {
-            await User.findByIdAndDelete(req.user._id);
+            await User.findByIdAndDelete(_id);
+            await Task.deleteMany({ author: _id });
 
             Helpers.handleSuccessResponse(res, 204, {});
       } catch ({ message }) {

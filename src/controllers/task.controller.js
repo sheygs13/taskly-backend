@@ -4,8 +4,9 @@ const Helpers = require("../helpers/helpers");
 
 const createTask = async (req, res) => {
       const { description, completed } = req.body;
+      const { _id } = req.user;
 
-      const task = new Task({ description, completed, author: req.user._id });
+      const task = new Task({ description, completed, author: _id });
       try {
             await task.save();
 
@@ -19,12 +20,13 @@ const createTask = async (req, res) => {
 };
 const getSingleTask = async (req, res) => {
       const { id: _id } = req.params;
+      const { _id: authorId } = req.user;
 
       if (!ObjectId.isValid(_id))
             return Helpers.handleErrorResponse(res, 400, "Provide a valid Id.");
 
       try {
-            const task = await Task.findOne({ _id, author: req.user._id });
+            const task = await Task.findOne({ _id, author: authorId });
 
             if (!task) return Helpers.handleErrorResponse(res, 404, "No record exist.");
 
@@ -37,8 +39,9 @@ const getSingleTask = async (req, res) => {
       }
 };
 const getAllTasks = async (req, res) => {
+      const { _id } = req.user;
       try {
-            const tasks = await Task.find({ author: req.user._id });
+            const tasks = await Task.find({ author: _id });
 
             if (!tasks.length)
                   return Helpers.handleSuccessResponse(res, 200, {
@@ -56,12 +59,13 @@ const getAllTasks = async (req, res) => {
 };
 const updateTask = async (req, res) => {
       const { id: _id } = req.params;
+      const { _id: authorId } = req.user;
 
       if (!ObjectId.isValid(_id))
             return Helpers.handleErrorResponse(res, 400, "Provide a valid Id.");
 
       try {
-            const task = await Task.findOne({ _id, author: req.user._id });
+            const task = await Task.findOne({ _id, author: authorId });
 
             if (!task) return Helpers.handleErrorResponse(res, 404, "Task not found.");
 
@@ -89,11 +93,12 @@ const updateTask = async (req, res) => {
 };
 const deleteTask = async (req, res) => {
       const { id: _id } = req.params;
+      const { _id: authorId } = req.user;
 
       if (!ObjectId.isValid(_id))
             return Helpers.handleErrorResponse(res, 400, "Provide a valid Id.");
       try {
-            const task = await Task.findOneAndDelete({ _id, author: req.user._id });
+            const task = await Task.findOneAndDelete({ _id, author: authorId });
 
             if (!task) return Helpers.handleErrorResponse(res, 404, "Task not found.");
 
