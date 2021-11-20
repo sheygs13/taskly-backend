@@ -1,23 +1,21 @@
 const jwt = require("jsonwebtoken");
-
+const Helpers = require("../helpers/helpers");
 const User = require("../models/user");
 
 const verifyAuthToken = async (req, res, next) => {
       const authHeader = req.header("Authorization");
 
-      if (typeof authHeader === "undefined") {
-            return res.status(401).json({
-                  error: "Unauthorized - Headers not set.",
-                  status: "fail",
-            });
-      }
+      if (typeof authHeader === "undefined")
+            return Helpers.handleErrorResponse(
+                  res,
+                  401,
+                  "Unauthorized - Headers not set."
+            );
+
       const token = authHeader.split(" ")[1];
 
       if (!token)
-            return res.status(401).json({
-                  error: "Unauthorized. Provide a token",
-                  status: "fail",
-            });
+            return Helpers.handleErrorResponse(res, 401, "Unauthorized. Provide a token");
 
       try {
             const decoded = jwt.verify(token, "trojan");
@@ -31,8 +29,7 @@ const verifyAuthToken = async (req, res, next) => {
             req.token = token;
             next();
       } catch ({ message }) {
-            res.status(401).json({ error: message, status: "fail" });
-            return;
+            return Helpers.handleErrorResponse(res, 401, message);
       }
 };
 
