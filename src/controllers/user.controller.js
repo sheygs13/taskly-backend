@@ -14,7 +14,7 @@ const createUser = async (req, res) => {
             Helpers.handleSuccessResponse(res, 201, {
                   user: Helpers.trimPublicProfile(user),
                   token,
-                  message: "Successfully created",
+                  message: "User account created.",
             });
       } catch ({ message }) {
             Helpers.handleErrorResponse(res, 400, message);
@@ -24,8 +24,6 @@ const createUser = async (req, res) => {
 
 const logInUser = async (req, res) => {
       const { email, password } = req.body;
-      // if the email does not exist, flag the user
-      // if the password does not match the db password, flag the user
 
       try {
             const user = await User.verifyEmailPassword(email, password);
@@ -41,8 +39,7 @@ const logInUser = async (req, res) => {
                   message: "Successfully logged in.",
             });
       } catch ({ message }) {
-            Helpers.handleErrorResponse(res, 400, message);
-            return;
+            return Helpers.handleErrorResponse(res, 400, message);
       }
 };
 
@@ -56,11 +53,10 @@ const logOutUser = async (req, res) => {
 
             Helpers.handleSuccessResponse(res, 200, {
                   user: Helpers.trimPublicProfile(req.user),
-                  message: "Logged out successfully",
+                  message: "Logged out successfully.",
             });
       } catch ({ message }) {
-            Helpers.handleErrorResponse(res, 500, message);
-            return;
+            return Helpers.handleErrorResponse(res, 500, message);
       }
 };
 
@@ -72,12 +68,11 @@ const logOutUserAll = async (req, res) => {
             await req.user.save();
 
             res.status(200).json({
-                  message: "Successfully logged out from all sessions",
+                  message: "Logged out successfully from all sessions.",
                   status: "success",
             });
       } catch ({ message }) {
-            Helpers.handleErrorResponse(res, 500, message);
-            return;
+            return Helpers.handleErrorResponse(res, 500, message);
       }
 };
 
@@ -85,11 +80,10 @@ const getUserProfile = async (req, res) => {
       try {
             Helpers.handleSuccessResponse(res, 200, {
                   user: Helpers.trimPublicProfile(req.user),
-                  message: "Spooled successfully",
+                  message: "Profiled spooled successfully.",
             });
       } catch ({ message }) {
-            Helpers.handleErrorResponse(res, 500, message);
-            return;
+            return Helpers.handleErrorResponse(res, 500, message);
       }
 };
 
@@ -111,7 +105,7 @@ const updateUserProfile = async (req, res) => {
 
             Helpers.handleSuccessResponse(res, 200, {
                   user: Helpers.trimPublicProfile(req.user),
-                  message: "Successfully updated",
+                  message: "Successfully updated.",
             });
       } catch ({ message }) {
             return Helpers.handleErrorResponse(res, 500, message);
@@ -122,10 +116,7 @@ const deleteUserProfile = async (req, res) => {
       try {
             await User.findByIdAndDelete(req.user._id);
 
-            res.status(204).json({
-                  message: "User profile has successfully been deleted",
-                  status: "success",
-            });
+            Helpers.handleSuccessResponse(res, 204, {});
       } catch ({ message }) {
             return Helpers.handleErrorResponse(res, 400, message);
       }

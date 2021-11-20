@@ -4,20 +4,20 @@ const ALLOWED_TASK_UPDATES = ["description", "completed"];
 
 const trimPublicProfile = ({ _id, email, name }) => ({ _id, email, name });
 
-const allowedUpdates = (req = {}, type = "user") => {
+const handleUserUpdate = (update) => ALLOWED_USER_UPDATES.includes(update);
+
+const handleTaskUpdate = (update) => ALLOWED_TASK_UPDATES.includes(update);
+
+const allowedUpdates = (req = {}, updateType = "") => {
       const clientUpdates = Object.keys(req);
 
       let isValid = false;
 
-      if (type === "user") {
-            isValid = clientUpdates.every((update) =>
-                  ALLOWED_USER_UPDATES.includes(update)
-            );
+      if (updateType === "user") {
+            isValid = clientUpdates.every(handleUserUpdate);
       }
-      if (type === "task") {
-            isValid = clientUpdates.every((update) =>
-                  ALLOWED_TASK_UPDATES.includes(update)
-            );
+      if (updateType === "task") {
+            isValid = clientUpdates.every(handleTaskUpdate);
       }
 
       return isValid;
@@ -30,9 +30,8 @@ const updateRecord = (item = {}, bodyReq = {}) => {
       }
 };
 
-const removeSessionTokens = (tokens = [], reqToken = "") => {
-      return tokens.filter((tokenObj) => tokenObj.token !== reqToken);
-};
+const removeSessionTokens = (tokens = [], reqToken = "") =>
+      tokens.filter((tokenObj) => tokenObj.token !== reqToken);
 
 const handleSuccessResponse = (res, statusCode, data = {}) => {
       res.status(statusCode).json({
