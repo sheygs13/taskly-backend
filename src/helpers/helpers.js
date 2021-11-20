@@ -1,19 +1,32 @@
+const ALLOWED_USER_UPDATES = ["email", "password"];
+
+const ALLOWED_TASK_UPDATES = ["description", "completed"];
+
 const getPublicProfile = ({ _id, email, name }) => ({ _id, email, name });
 
-const allowedUpdates = (req = {}) => {
+const allowedUpdates = (req = {}, type = "user") => {
       const clientUpdates = Object.keys(req);
 
-      const allowed = ["email", "password"];
+      let isValid = false;
 
-      const isValid = clientUpdates.every((update) => allowed.includes(update));
+      if (type === "user") {
+            isValid = clientUpdates.every((update) =>
+                  ALLOWED_USER_UPDATES.includes(update)
+            );
+      }
+      if (type === "task") {
+            isValid = clientUpdates.every((update) =>
+                  ALLOWED_TASK_UPDATES.includes(update)
+            );
+      }
 
       return isValid;
 };
 
-const updateProfile = (user = {}, req = {}) => {
-      const clientUpdates = Object.keys(req);
+const updateRecord = (item = {}, bodyReq = {}) => {
+      const clientUpdates = Object.keys(bodyReq);
       for (const update of clientUpdates) {
-            user[update] = req[update];
+            item[update] = bodyReq[update];
       }
 };
 
@@ -27,7 +40,6 @@ const handleSuccessResponse = (res, statusCode, data = {}) => {
             data,
       });
 };
-
 
 const handleErrorResponse = (res, statusCode, errorMessage = "") => {
       res.status(statusCode).json({
@@ -47,7 +59,7 @@ module.exports = {
 
       allowedUpdates,
 
-      updateProfile,
+      updateRecord,
 
       removeSessionTokens,
 
