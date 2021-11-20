@@ -6,6 +6,8 @@ const bcrypt = require("bcryptjs");
 
 const jwt = require("jsonwebtoken");
 
+const Task = require("./task");
+
 const userSchema = new mongoose.Schema({
       name: {
             type: String,
@@ -95,13 +97,19 @@ userSchema.methods.generateAuthToken = async function () {
       }
 };
 
+// hash plain password before saving
 userSchema.pre("save", async function (next) {
       // only hash the password if it's been modified
       if (this.isModified("password")) {
             this.password = await bcrypt.hash(this.password, 8);
       }
       // this refers to the document
-      // console.log("this", this);
+      next();
+});
+
+// delete tasks when user is removed
+userSchema.pre("remove", async function (next) {
+      await Task.deleteMany({ author: this._id });
       next();
 });
 
