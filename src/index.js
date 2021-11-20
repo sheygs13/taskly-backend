@@ -14,7 +14,7 @@ const port = process.env.PORT || 3000;
 //       res.status(503).json({
 //             message: "This site is under maintenance. Please try again later.",
 //       });
-//      // next();
+//      next();
 // });
 
 // parse request body
@@ -25,3 +25,5 @@ app.use("/api/v1/auth/users", userRoute);
 app.use("/api/v1/tasks", taskRoute);
 
 app.listen(port, () => console.log(`Server listening on port ${port}...`));
+
+

@@ -53,6 +53,12 @@ const userSchema = new mongoose.Schema({
       ],
 });
 
+userSchema.virtual("tasks", {
+      ref: "Task",
+      localField: "_id",
+      foreignField: "author",
+});
+
 userSchema.statics.verifyEmailPassword = async (email, password) => {
       try {
             const user = await User.findOne({ email });
