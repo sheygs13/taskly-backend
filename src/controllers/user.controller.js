@@ -30,14 +30,18 @@ const logInUser = async (req, res) => {
             const user = await User.verifyEmailPassword(email, password);
 
             if (!user)
-                  return Helpers.handleErrorResponse(res, 400, "Unable to login user");
+                  return Helpers.handleErrorResponse(
+                        res,
+                        400,
+                        "Email or Password is invalid."
+                  );
 
             const token = await user.generateAuthToken();
 
             Helpers.handleSuccessResponse(res, 200, {
                   user: Helpers.trimPublicProfile(user),
                   token,
-                  message: "Successfully logged in.",
+                  message: "Logged in successfully.",
             });
       } catch ({ message }) {
             return Helpers.handleErrorResponse(res, 400, message);
@@ -68,9 +72,9 @@ const logOutUserAll = async (req, res) => {
 
             await req.user.save();
 
-            res.status(200).json({
+            Helpers.handleSuccessResponse(res, 200, {
+                  user: req.user,
                   message: "Logged out successfully from all sessions.",
-                  status: "success",
             });
       } catch ({ message }) {
             return Helpers.handleErrorResponse(res, 500, message);
@@ -81,7 +85,7 @@ const getUserProfile = async (req, res) => {
       try {
             Helpers.handleSuccessResponse(res, 200, {
                   user: Helpers.trimPublicProfile(req.user),
-                  message: "Profiled spooled successfully.",
+                  message: "Profile spooled successfully.",
             });
       } catch ({ message }) {
             return Helpers.handleErrorResponse(res, 500, message);
@@ -106,7 +110,7 @@ const updateUserProfile = async (req, res) => {
 
             Helpers.handleSuccessResponse(res, 200, {
                   user: Helpers.trimPublicProfile(req.user),
-                  message: "Successfully updated.",
+                  message: "Update(s) successful.",
             });
       } catch ({ message }) {
             return Helpers.handleErrorResponse(res, 500, message);

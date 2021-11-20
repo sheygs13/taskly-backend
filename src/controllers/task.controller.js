@@ -12,7 +12,7 @@ const createTask = async (req, res) => {
 
             Helpers.handleSuccessResponse(res, 201, {
                   task,
-                  message: "Successfully created.",
+                  message: "Task created.",
             });
       } catch ({ message }) {
             return Helpers.handleErrorResponse(res, 400, message);
@@ -32,7 +32,7 @@ const getSingleTask = async (req, res) => {
 
             Helpers.handleSuccessResponse(res, 200, {
                   task,
-                  message: "Successfully found record.",
+                  message: "Task details retrieved.",
             });
       } catch ({ message }) {
             return Helpers.handleErrorResponse(res, 500, message);
@@ -51,7 +51,7 @@ const getAllTasks = async (req, res) => {
 
             return Helpers.handleSuccessResponse(res, 200, {
                   tasks,
-                  message: "Successfully spooled all tasks",
+                  message: "Spooled all tasks successfully.",
             });
       } catch ({ message }) {
             return Helpers.handleErrorResponse(res, 500, message);
@@ -85,7 +85,7 @@ const updateTask = async (req, res) => {
 
             Helpers.handleSuccessResponse(res, 200, {
                   task,
-                  message: "Task successfully updated.",
+                  message: "Task updated successfully.",
             });
       } catch ({ message }) {
             return Helpers.handleErrorResponse(res, 400, message);
