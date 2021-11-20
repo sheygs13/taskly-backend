@@ -14,7 +14,7 @@ const port = process.env.PORT || 3000;
 //       res.status(503).json({
 //             message: "This site is under maintenance. Please try again later.",
 //       });
-//      // next();
+//      next();
 // });
 
 // parse request body

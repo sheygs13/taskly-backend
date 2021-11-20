@@ -28,6 +28,7 @@ const handleSuccessResponse = (res, statusCode, data = {}) => {
       });
 };
 
+
 const handleErrorResponse = (res, statusCode, errorMessage = "") => {
       res.status(statusCode).json({
             error: errorMessage,
