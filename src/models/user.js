@@ -4,52 +4,55 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 // const Task = require("./task");
 
-const userSchema = new mongoose.Schema({
-      name: {
-            type: String,
-            required: true,
-            trim: true,
-            validate(name) {
-                  if (!/^[a-z]{3,}[\s][a-z]{3,}$/i.test(name)) {
-                        throw new Error("Format: firstname lastname");
-                  }
-            },
-      },
-
-      email: {
-            type: String,
-            trim: true,
-            unique: true,
-            required: true,
-            validate(val) {
-                  if (!isEmail(val)) {
-                        throw new Error("Invalid email");
-                  }
-            },
-      },
-      // extra validation
-      password: {
-            type: String,
-            trim: true,
-            required: true,
-            minLength: 6,
-            maxLength: 255,
-            validate(pwd) {
-                  if (pwd.length < 6 || pwd.length > 255) {
-                        throw new Error("Password not within range");
-                  }
-            },
-      },
-
-      tokens: [
-            {
-                  token: {
-                        type: String,
-                        required: true,
+const userSchema = new mongoose.Schema(
+      {
+            name: {
+                  type: String,
+                  required: true,
+                  trim: true,
+                  validate(name) {
+                        if (!/^[a-z]{3,}[\s][a-z]{3,}$/i.test(name)) {
+                              throw new Error("Format: firstname lastname");
+                        }
                   },
             },
-      ],
-});
+
+            email: {
+                  type: String,
+                  trim: true,
+                  unique: true,
+                  required: true,
+                  validate(val) {
+                        if (!isEmail(val)) {
+                              throw new Error("Invalid email");
+                        }
+                  },
+            },
+            // extra validation
+            password: {
+                  type: String,
+                  trim: true,
+                  required: true,
+                  minLength: 6,
+                  maxLength: 255,
+                  validate(pwd) {
+                        if (pwd.length < 6 || pwd.length > 255) {
+                              throw new Error("Password not within range");
+                        }
+                  },
+            },
+
+            tokens: [
+                  {
+                        token: {
+                              type: String,
+                              required: true,
+                        },
+                  },
+            ],
+      },
+      { timestamps: true }
+);
 
 userSchema.virtual("tasks", {
       ref: "Task",

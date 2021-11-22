@@ -2,7 +2,13 @@ const ALLOWED_USER_UPDATES = ["email", "password"];
 
 const ALLOWED_TASK_UPDATES = ["description", "completed"];
 
-const trimPublicProfile = ({ _id, email, name }) => ({ _id, email, name });
+const trimPublicProfile = ({ _id, email, name, createdAt, updatedAt }) => ({
+      _id,
+      email,
+      name,
+      createdAt,
+      updatedAt,
+});
 
 const handleUserUpdate = (update) => ALLOWED_USER_UPDATES.includes(update);
 
