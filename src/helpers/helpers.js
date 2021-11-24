@@ -55,6 +55,10 @@ const handleErrorResponse = (res, statusCode, errorMessage = "") => {
 
 const hasBody = (obj = {}) => Object.keys(obj).length;
 
+const message = (arr) => {
+      return `${arr.length > 1 ? `${arr.length} tasks` : `${arr.length} task`}  found.`;
+};
+
 module.exports = {
       trimPublicProfile,
 
@@ -69,4 +73,6 @@ module.exports = {
       removeSessionTokens,
 
       hasBody,
+
+      message
 };

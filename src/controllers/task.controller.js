@@ -59,11 +59,7 @@ const getAllTasks = async (req, res) => {
 
             return Helpers.handleSuccessResponse(res, 200, {
                   tasks,
-                  message: `${
-                        tasks.length > 1
-                              ? `${tasks.length} tasks`
-                              : `${tasks.length} task`
-                  } found.`,
+                  message: Helpers.message(tasks),
             });
       } catch ({ message }) {
             return Helpers.handleErrorResponse(res, 500, message);
