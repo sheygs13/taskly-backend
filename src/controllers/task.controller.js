@@ -38,10 +38,18 @@ const getSingleTask = async (req, res) => {
             return Helpers.handleErrorResponse(res, 500, message);
       }
 };
+
+// GET/ api/v1/tasks?completed=true
 const getAllTasks = async (req, res) => {
       const { _id } = req.user;
+
+      const { completed } = req.query;
+
       try {
-            const tasks = await Task.find({ author: _id });
+            const tasks = await Task.find({
+                  author: _id,
+                  ...(completed && { completed }),
+            });
 
             if (!tasks.length)
                   return Helpers.handleSuccessResponse(res, 200, {
@@ -51,7 +59,11 @@ const getAllTasks = async (req, res) => {
 
             return Helpers.handleSuccessResponse(res, 200, {
                   tasks,
-                  message: "Spooled all tasks successfully.",
+                  message: `${
+                        tasks.length > 1
+                              ? `${tasks.length} tasks`
+                              : `${tasks.length} task`
+                  } found.`,
             });
       } catch ({ message }) {
             return Helpers.handleErrorResponse(res, 500, message);
