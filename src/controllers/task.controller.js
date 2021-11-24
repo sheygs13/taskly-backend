@@ -40,16 +40,21 @@ const getSingleTask = async (req, res) => {
 };
 
 // GET/ api/v1/tasks?completed=true
+// GET/ api/v1/tasks?limit=10&skip=2
 const getAllTasks = async (req, res) => {
       const { _id } = req.user;
 
-      const { completed } = req.query;
+      const { completed, limit: Limit, skip: Skip } = req.query;
 
       try {
-            const tasks = await Task.find({
-                  author: _id,
-                  ...(completed && { completed }),
-            });
+            const tasks = await Task.find(
+                  {
+                        author: _id,
+                        ...(completed && { completed }),
+                  },
+                  null,
+                  { limit: +Limit, skip: +Skip }
+            );
 
             if (!tasks.length)
                   return Helpers.handleSuccessResponse(res, 200, {
