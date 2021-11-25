@@ -41,6 +41,8 @@ const getSingleTask = async (req, res) => {
 
 // GET/ api/v1/tasks?completed=true
 // GET/ api/v1/tasks?limit=10&skip=2
+// GET/ api/v1/tasks?sortBy=createdAt:desc
+
 const getAllTasks = async (req, res) => {
       const { _id } = req.user;
 
