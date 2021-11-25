@@ -55,8 +55,25 @@ const handleErrorResponse = (res, statusCode, errorMessage = "") => {
 
 const hasBody = (obj = {}) => Object.keys(obj).length;
 
-const message = (arr) => {
+const returnMessage = (arr) => {
       return `${arr.length > 1 ? `${arr.length} tasks` : `${arr.length} task`}  found.`;
+};
+
+const paginateData = (Limit, Skip) => ({
+      limit: +Limit,
+      skip: +Skip,
+});
+
+const sortOption = (sortBy) => {
+      const sort = {};
+      let parts = [];
+      if (sortBy) {
+            parts = sortBy.split(":");
+            sort[parts[0]] = parts[1] === "desc" ? -1 : 1;
+      }
+      return {
+            ...sort,
+      };
 };
 
 module.exports = {
@@ -74,5 +91,11 @@ module.exports = {
 
       hasBody,
 
-      message
+      returnMessage,
+
+      filterQuery,
+
+      paginateData,
+
+      sortOption,
 };

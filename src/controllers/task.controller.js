@@ -44,7 +44,7 @@ const getSingleTask = async (req, res) => {
 const getAllTasks = async (req, res) => {
       const { _id } = req.user;
 
-      const { completed, limit: Limit, skip: Skip } = req.query;
+      const { completed, limit: Limit, skip: Skip, sortBy } = req.query;
 
       try {
             const tasks = await Task.find(
@@ -53,8 +53,8 @@ const getAllTasks = async (req, res) => {
                         ...(completed && { completed }),
                   },
                   null,
-                  { limit: +Limit, skip: +Skip }
-            );
+                  Helpers.paginateData(Limit, Skip)
+            ).sort(Helpers.sortOption(sortBy));
 
             if (!tasks.length)
                   return Helpers.handleSuccessResponse(res, 200, {
@@ -64,7 +64,7 @@ const getAllTasks = async (req, res) => {
 
             return Helpers.handleSuccessResponse(res, 200, {
                   tasks,
-                  message: Helpers.message(tasks),
+                  message: Helpers.returnMessage(tasks),
             });
       } catch ({ message }) {
             return Helpers.handleErrorResponse(res, 500, message);
