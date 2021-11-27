@@ -4,9 +4,21 @@ const UserController = require("../controllers/user.controller");
 
 const verifyAuthToken = require("../middleware/auth.middleware");
 
+const avatarUpload = require("../middleware/upload.middleware");
+
+const handleUploadError = require("../middleware/handleUploadError.middleware");
+
 const router = express.Router();
 
 router.post("/register", UserController.createUser);
+
+router.post(
+      "/me/avatar",
+      verifyAuthToken,
+      avatarUpload("2mb").single("image"),
+      handleUploadError,
+      UserController.uploadAvatar
+);
 
 router.post("/sign-in", UserController.logInUser);
 
