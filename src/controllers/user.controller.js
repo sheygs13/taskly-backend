@@ -129,18 +129,34 @@ const deleteUserProfile = async (req, res) => {
       }
 };
 
-const uploadAvatar = async (req, res) => {
-      // console.log({ req });
-      const {
-            user: { _id },
-            file,
-      } = req;
-      return res.status(200).json({ file, userId: _id });
+const addAvatar = async (req, res) => {
+      try {
+            const {
+                  // user: { _id },
+                  file: { buffer },
+            } = req;
+            req.user.avatar = buffer;
+            await req.user.save();
+            return Helpers.handleSuccessResponse(res, 200, {});
+      } catch ({ message }) {
+            return Helpers.handleErrorResponse(res, 500, message);
+      }
+};
+
+const deleteAvatar = async (req, res) => {
+      try {
+            req.user.avatar = undefined;
+            await req.user.save();
+            return Helpers.handleSuccessResponse(res, 200, {});
+      } catch ({ message }) {
+            return Helpers.handleErrorResponse(res, 500, message);
+      }
 };
 
 const UserController = {
       createUser,
-      uploadAvatar,
+      addAvatar,
+      deleteAvatar,
       logInUser,
       logOutUser,
       logOutUserAll,

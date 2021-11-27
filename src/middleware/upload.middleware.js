@@ -6,7 +6,7 @@ module.exports = (fileSize) => {
       }
       fileSize = parseInt(fileSize) * 1000000;
       const upload = multer({
-            dest: "images",
+            //dest: "images",
             limits: {
                   fileSize,
             },
