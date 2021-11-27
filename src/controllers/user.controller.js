@@ -129,8 +129,18 @@ const deleteUserProfile = async (req, res) => {
       }
 };
 
+const uploadAvatar = async (req, res) => {
+      // console.log({ req });
+      const {
+            user: { _id },
+            file,
+      } = req;
+      return res.status(200).json({ file, userId: _id });
+};
+
 const UserController = {
       createUser,
+      uploadAvatar,
       logInUser,
       logOutUser,
       logOutUserAll,

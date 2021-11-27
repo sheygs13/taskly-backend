@@ -93,8 +93,6 @@ module.exports = {
 
       returnMessage,
 
-      filterQuery,
-
       paginateData,
 
       sortOption,
