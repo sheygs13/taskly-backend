@@ -1,6 +1,7 @@
 const User = require('../models/user');
 const Helpers = require('../helpers/helpers');
 const Task = require('../models/task');
+const sharp = require('sharp');
 
 const createUser = async (req, res) => {
         const { name, email, password } = req.body;
@@ -114,8 +115,10 @@ const updateUserProfile = async (req, res) => {
 
 const deleteUserProfile = async (req, res) => {
         const { _id } = req.user;
+        
         try {
                 await User.findByIdAndDelete(_id);
+
                 await Task.deleteMany({ author: _id });
 
                 Helpers.handleSuccessResponse(res, 204, {});
@@ -129,8 +132,16 @@ const addAvatar = async (req, res) => {
                 const {
                         file: { buffer },
                 } = req;
-                req.user.avatar = buffer;
+
+                const avatarBuffer = await sharp(buffer)
+                        .resize({ width: 150, height: 150 })
+                        .jpeg()
+                        .toBuffer();
+
+                req.user.avatar = avatarBuffer;
+
                 await req.user.save();
+
                 return Helpers.handleSuccessResponse(res, 200, {});
         } catch ({ message }) {
                 return Helpers.handleErrorResponse(res, 500, message);
@@ -140,7 +151,9 @@ const addAvatar = async (req, res) => {
 const deleteAvatar = async (req, res) => {
         try {
                 req.user.avatar = undefined;
+
                 await req.user.save();
+
                 return Helpers.handleSuccessResponse(res, 200, {});
         } catch ({ message }) {
                 return Helpers.handleErrorResponse(res, 500, message);
@@ -151,11 +164,13 @@ const getAvatar = async (req, res) => {
         const { id: _id } = req.params;
         try {
                 const user = await User.findById(_id);
-                console.log({ user });
+
                 if (!user) return Helpers.handleErrorResponse(res, 404, 'User does not exist.');
+
                 if (!user?.avatar)
                         return Helpers.handleErrorResponse(res, 404, 'Avatar does not exist.');
-                res.set('Content-Type', 'image/jpg').send(user.avatar);
+
+                res.set('Content-Type', 'image/jpeg').send(user.avatar);
         } catch ({ message }) {
                 return Helpers.handleErrorResponse(res, 500, message);
         }
