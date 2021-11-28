@@ -39,17 +39,17 @@ const updateRecord = (item = {}, bodyReq = {}) => {
 const removeSessionTokens = (tokens = [], reqToken = "") =>
       tokens.filter((tokenObj) => tokenObj.token !== reqToken);
 
-const handleSuccessResponse = (res, statusCode, data = {}) => {
-      res.status(statusCode).json({
+const handleSuccessResponse = (res, code, data = {}) => {
+      res.status(code).json({
             status: "success",
             data,
       });
 };
 
-const handleErrorResponse = (res, statusCode, errorMessage = "") => {
-      res.status(statusCode).json({
-            error: errorMessage,
+const handleErrorResponse = (res, code, errorMessage = "") => {
+      res.status(code).json({
             status: "fail",
+            error: errorMessage,
       });
 };
 
@@ -78,22 +78,13 @@ const sortOption = (sortBy) => {
 
 module.exports = {
       trimPublicProfile,
-
       handleErrorResponse,
-
       handleSuccessResponse,
-
       allowedUpdates,
-
       updateRecord,
-
       removeSessionTokens,
-
       hasBody,
-
       returnMessage,
-
       paginateData,
-
       sortOption,
 };
