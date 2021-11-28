@@ -4,7 +4,7 @@ const router = express.Router();
 
 const TaskController = require('../controllers/task.controller');
 
-const verifyAuthToken = require('../middleware/auth.middleware');
+const verifyAuthToken = require('../middleware/auth');
 
 router.post('/', verifyAuthToken, TaskController.createTask);
 

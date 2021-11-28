@@ -2,11 +2,11 @@ const express = require('express');
 
 const UserController = require('../controllers/user.controller');
 
-const verifyAuthToken = require('../middleware/auth.middleware');
+const verifyAuthToken = require('../middleware/auth');
 
-const avatarUpload = require('../middleware/upload.middleware');
+const uploadAvatar = require('../middleware/multer');
 
-const handleUploadError = require('../middleware/handleUploadError.middleware');
+const handleErrorUpload = require('../middleware/handleErrorUpload');
 
 const router = express.Router();
 
@@ -21,8 +21,8 @@ router.post('/sign-out-all', verifyAuthToken, UserController.logOutUserAll);
 router.post(
         '/me/avatar',
         verifyAuthToken,
-        avatarUpload('2MB').single('image'),
-        handleUploadError,
+        uploadAvatar('2MB').single('image'),
+        handleErrorUpload,
         UserController.addAvatar
 );
 

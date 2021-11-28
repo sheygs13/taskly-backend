@@ -1,6 +1,6 @@
 require('./db/db');
 
-const _ = require('./middleware/maintenance.middleware');
+const _ = require('./middleware/maintenance');
 
 const express = require('express');
 
