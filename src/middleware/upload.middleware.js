@@ -12,7 +12,7 @@ module.exports = (fileSize) => {
                 },
                 fileFilter: (req, file, cb) => {
                         if (!/\.(jpg|png|jpeg)$/.test(file.originalname)) {
-                                cb(new Error('File type must have a jp(e)g or png extension.'));
+                                cb(new Error('File type must have a jpg or png extension.'));
                                 return;
                         }
                         req.file = file;
