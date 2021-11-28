@@ -6,14 +6,15 @@ const DB_NAME = "taskly-backend";
 
 const Helpers = require("../helpers/helpers");
 
-(async (req, res, next) => {
+(async (req, res) => {
       const options = {
             useNewUrlParser: true,
-            useUnifiedTopology: true,
+            useCreateIndex: true,
+            useFindAndModify: false,
       };
       try {
             await mongoose.connect(`${BASE_URL}/${DB_NAME}`, options);
-            next();
+
       } catch ({ message }) {
             return Helpers.handleErrorResponse(res, 500, message);
       }
