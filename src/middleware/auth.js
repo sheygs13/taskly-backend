@@ -1,3 +1,4 @@
+require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const Helpers = require('../helpers/helpers');
 const User = require('../models/user');
@@ -13,7 +14,7 @@ const verifyAuthToken = async (req, res, next) => {
         if (!token) return Helpers.handleErrorResponse(res, 401, 'Unauthorized. Provide a token');
 
         try {
-                const decoded = jwt.verify(token, 'trojan');
+                const decoded = jwt.verify(token, process.env.JWT_SECRET);
                 // ensure that the user id and token exists
                 const user = await User.findOne({ _id: decoded._id, 'tokens.token': token });
 

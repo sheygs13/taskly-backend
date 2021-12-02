@@ -1,3 +1,4 @@
+require('dotenv').config();
 const mongoose = require('mongoose');
 const { isEmail } = require('validator/validator');
 const bcrypt = require('bcryptjs');
@@ -84,7 +85,7 @@ userSchema.statics.verifyEmailPassword = async (email, password) => {
 userSchema.methods.generateAuthToken = async function () {
         try {
                 // this - user;
-                const token = jwt.sign({ _id: String(this._id) }, 'trojan', {
+                const token = jwt.sign({ _id: String(this._id) }, process.env.JWT_SECRET, {
                         expiresIn: '1 hr',
                 });
 
