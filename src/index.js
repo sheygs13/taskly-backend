@@ -1,4 +1,5 @@
 require('./db/db');
+require('dotenv').config();
 
 const _ = require('./middleware/maintenance');
 
@@ -10,7 +11,7 @@ const taskRoute = require('./routes/task.route');
 
 const app = express();
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 
 // app.use('/', _);
 

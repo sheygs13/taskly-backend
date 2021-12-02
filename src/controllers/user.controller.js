@@ -2,7 +2,7 @@ const User = require('../models/user');
 const Helpers = require('../helpers/helpers');
 const Task = require('../models/task');
 const sharp = require('sharp');
-const { welcomeEmail, cancelationMail } = require('../service/email');
+const { welcomeEmail, cancellationMail } = require('../service/email');
 
 const createUser = async (req, res) => {
         const { name, email, password } = req.body;
@@ -126,7 +126,7 @@ const deleteUserProfile = async (req, res) => {
 
                 Helpers.handleSuccessResponse(res, 204, {});
 
-                cancelationMail(name, email);
+                cancellationMail(name, email);
         } catch ({ message }) {
                 return Helpers.handleErrorResponse(res, 400, message);
         }

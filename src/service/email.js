@@ -18,7 +18,7 @@ const welcomeEmail = async (name, email) => {
         }
 };
 
-const cancelationMail = async (name, email) => {
+const cancellationMail = async (name, email) => {
         try {
                 const mailOptions = {
                         from: 'segun.ekoh@gmail.com',
@@ -34,5 +34,5 @@ const cancelationMail = async (name, email) => {
 
 module.exports = {
         welcomeEmail,
-        cancelationMail,
+        cancellationMail,
 };
