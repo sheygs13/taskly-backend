@@ -10,7 +10,7 @@ const welcomeEmail = async (name, email) => {
                         from: 'segun.ekoh@gmail.com',
                         to: email,
                         subject: 'THANKS FOR JOINING IN!',
-                        html: `<p>Hi <strong>${name}</strong>, welcome to task manager. Thanks for joining.</p>`,
+                        html: `<p>Hi <strong>${name}</strong>, welcome to taskly service. Thanks for joining.</p>`,
                 };
                 await sgMail.send(mailOptions);
         } catch ({ message }) {
@@ -24,7 +24,7 @@ const cancelationMail = async (name, email) => {
                         from: 'segun.ekoh@gmail.com',
                         to: email,
                         subject: 'SORRY TO SEE YOU GO!',
-                        html: `<p>Hi <strong>${name}</strong>, we're sorry to see you go!.</p>`,
+                        html: `<p>Goodbye <strong>${name}</strong>, I hope to see you something soon.</p>`,
                 };
                 await sgMail.send(mailOptions);
         } catch ({ message }) {
