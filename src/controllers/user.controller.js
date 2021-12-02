@@ -2,6 +2,7 @@ const User = require('../models/user');
 const Helpers = require('../helpers/helpers');
 const Task = require('../models/task');
 const sharp = require('sharp');
+const { welcomeEmail, cancelationMail } = require('../service/email');
 
 const createUser = async (req, res) => {
         const { name, email, password } = req.body;
@@ -18,6 +19,8 @@ const createUser = async (req, res) => {
                         token,
                         message: 'User account created.',
                 });
+
+                welcomeEmail(name, email);
         } catch ({ message }) {
                 return Helpers.handleErrorResponse(res, 400, message);
         }
@@ -114,14 +117,16 @@ const updateUserProfile = async (req, res) => {
 };
 
 const deleteUserProfile = async (req, res) => {
-        const { _id } = req.user;
-        
+        const { _id, name, email } = req.user;
+
         try {
                 await User.findByIdAndDelete(_id);
 
                 await Task.deleteMany({ author: _id });
 
                 Helpers.handleSuccessResponse(res, 204, {});
+
+                cancelationMail(name, email);
         } catch ({ message }) {
                 return Helpers.handleErrorResponse(res, 400, message);
         }
