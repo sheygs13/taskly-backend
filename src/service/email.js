@@ -3,7 +3,10 @@ require('dotenv').config();
 const sgMail = require('@sendgrid/mail');
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-
+/**
+ * @param  {} name
+ * @param  {} email
+ */
 const welcomeEmail = async (name, email) => {
         try {
                 const mailOptions = {
@@ -17,6 +20,10 @@ const welcomeEmail = async (name, email) => {
                 console.log(message);
         }
 };
+/**
+ * @param  {} name
+ * @param  {} email
+ */
 
 const cancellationMail = async (name, email) => {
         try {
@@ -36,3 +43,4 @@ module.exports = {
         welcomeEmail,
         cancellationMail,
 };
+
