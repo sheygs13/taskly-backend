@@ -3,7 +3,10 @@ const Helpers = require('../helpers/helpers');
 const Task = require('../models/task');
 const sharp = require('sharp');
 const { welcomeEmail, cancellationMail } = require('../service/email');
-
+/**
+ * @param  {} req
+ * @param  {} res
+ */
 const createUser = async (req, res) => {
         const { name, email, password } = req.body;
 
@@ -25,7 +28,10 @@ const createUser = async (req, res) => {
                 return Helpers.handleErrorResponse(res, 400, message);
         }
 };
-
+/**
+ * @param  {} req
+ * @param  {} res
+ */
 const logInUser = async (req, res) => {
         const { email, password } = req.body;
 
@@ -52,6 +58,10 @@ const logInUser = async (req, res) => {
 };
 
 // logout from individual session
+/**
+ * @param  {} req
+ * @param  {} res
+ */
 const logOutUser = async (req, res) => {
         try {
                 // delete the session token from the tokens array
@@ -69,6 +79,10 @@ const logOutUser = async (req, res) => {
 };
 
 // logout from all sessions
+/**
+ * @param  {} req
+ * @param  {} res
+ */
 const logOutUserAll = async (req, res) => {
         try {
                 req.user.tokens = [];
@@ -83,7 +97,10 @@ const logOutUserAll = async (req, res) => {
                 return Helpers.handleErrorResponse(res, 500, message);
         }
 };
-
+/**
+ * @param  {} req
+ * @param  {} res
+ */
 const getUserProfile = async (req, res) => {
         try {
                 Helpers.handleSuccessResponse(res, 200, {
@@ -94,7 +111,10 @@ const getUserProfile = async (req, res) => {
                 return Helpers.handleErrorResponse(res, 500, message);
         }
 };
-
+/**
+ * @param  {} req
+ * @param  {} res
+ */
 const updateUserProfile = async (req, res) => {
         try {
                 if (!Helpers.hasBody(req.body))
@@ -115,7 +135,10 @@ const updateUserProfile = async (req, res) => {
                 return Helpers.handleErrorResponse(res, 500, message);
         }
 };
-
+/**
+ * @param  {} req
+ * @param  {} res
+ */
 const deleteUserProfile = async (req, res) => {
         const { _id, name, email } = req.user;
 
@@ -131,7 +154,10 @@ const deleteUserProfile = async (req, res) => {
                 return Helpers.handleErrorResponse(res, 400, message);
         }
 };
-
+/**
+ * @param  {} req
+ * @param  {} res
+ */
 const addAvatar = async (req, res) => {
         try {
                 const {
@@ -152,7 +178,10 @@ const addAvatar = async (req, res) => {
                 return Helpers.handleErrorResponse(res, 500, message);
         }
 };
-
+/**
+ * @param  {} req
+ * @param  {} res
+ */
 const deleteAvatar = async (req, res) => {
         try {
                 req.user.avatar = undefined;
@@ -164,7 +193,10 @@ const deleteAvatar = async (req, res) => {
                 return Helpers.handleErrorResponse(res, 500, message);
         }
 };
-
+/**
+ * @param  {} req
+ * @param  {} res
+ */
 const getAvatar = async (req, res) => {
         const { id: _id } = req.params;
         try {

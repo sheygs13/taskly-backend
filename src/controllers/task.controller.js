@@ -1,7 +1,10 @@
 const Task = require('../models/task');
 const { ObjectId } = require('mongoose').Types;
 const Helpers = require('../helpers/helpers');
-
+/**
+ * @param  {} req
+ * @param  {} res
+ */
 const createTask = async (req, res) => {
         const { description, completed } = req.body;
         const { _id } = req.user;
@@ -18,6 +21,10 @@ const createTask = async (req, res) => {
                 return Helpers.handleErrorResponse(res, 400, message);
         }
 };
+/**
+ * @param  {} req
+ * @param  {} res
+ */
 const getSingleTask = async (req, res) => {
         const { id: _id } = req.params;
         const { _id: authorId } = req.user;
@@ -42,7 +49,10 @@ const getSingleTask = async (req, res) => {
 // GET/ api/v1/tasks?completed=true
 // GET/ api/v1/tasks?limit=10&skip=2
 // GET/ api/v1/tasks?sortBy=createdAt:desc
-
+/**
+ * @param  {} req
+ * @param  {} res
+ */
 const getAllTasks = async (req, res) => {
         const { _id } = req.user;
 
@@ -72,6 +82,10 @@ const getAllTasks = async (req, res) => {
                 return Helpers.handleErrorResponse(res, 500, message);
         }
 };
+/**
+ * @param  {} req
+ * @param  {} res
+ */
 const updateTask = async (req, res) => {
         const { id: _id } = req.params;
         const { _id: authorId } = req.user;
@@ -106,6 +120,10 @@ const updateTask = async (req, res) => {
                 return Helpers.handleErrorResponse(res, 400, message);
         }
 };
+/**
+ * @param  {} req
+ * @param  {} res
+ */
 const deleteTask = async (req, res) => {
         const { id: _id } = req.params;
         const { _id: authorId } = req.user;

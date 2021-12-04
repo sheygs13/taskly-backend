@@ -1,5 +1,7 @@
 const multer = require('multer');
-
+/**
+ * @param  {} fileSize
+ */
 module.exports = (fileSize) => {
         if (typeof fileSize !== 'string') {
                 throw new Error('Input string required');
