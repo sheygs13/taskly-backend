@@ -36,7 +36,8 @@ app.all('*', (req, res, next) => {
                 Helpers.handleErrorResponse(
                         res,
                         404,
-                        `${req.originalUrl} does not exist on this server.`
+                        `Unable to find requested route
+                         ${req.originalUrl} on this server.`
                 )
         );
 });
