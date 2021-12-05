@@ -26,8 +26,8 @@ app.use('/api/v1/auth/users', userRoute);
 app.use('/api/v1/tasks', taskRoute);
 
 // base path
-app.get('/', (res, res) => {
-        return Helpers.handleSuccessResponse(res, 200, { message: 'Taskly service here for you!' });
+app.get('/', (req, res) => {
+        Helpers.handleSuccessResponse(res, 200, { message: 'Taskly service here for you!' });
 });
 
 // non-existent patch
