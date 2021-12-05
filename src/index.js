@@ -10,7 +10,7 @@ const userRoute = require('./routes/user.route');
 
 const taskRoute = require('./routes/task.route');
 
-const Helpers = require('../helpers/helpers');
+const Helpers = require('./helpers/helpers');
 
 const app = express();
 
