@@ -1,13 +1,16 @@
 require('./db/db');
+
 require('dotenv').config();
 
-const _ = require('./middleware/maintenance');
+// const _ = require('./middleware/maintenance');
 
 const express = require('express');
 
 const userRoute = require('./routes/user.route');
 
 const taskRoute = require('./routes/task.route');
+
+const Helpers = require('../helpers/helpers');
 
 const app = express();
 
@@ -21,5 +24,21 @@ app.use(express.json());
 app.use('/api/v1/auth/users', userRoute);
 
 app.use('/api/v1/tasks', taskRoute);
+
+// base path
+app.get('/', (res, res) => {
+        return Helpers.handleSuccessResponse(res, 200, { message: 'Taskly service here for you!' });
+});
+
+// non-existent patch
+app.all('*', (req, res, next) => {
+        next(
+                Helpers.handleErrorResponse(
+                        res,
+                        404,
+                        `${req.originalUrl} does not exist on this server.`
+                )
+        );
+});
 
 app.listen(port, () => console.log(`Server listening on port ${port}...`));
