@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 (async () => {
         try {
-                await mongoose.connect(`${process.env.DB_BASE_URL}/${process.env.DB_NAME}`, {
+                await mongoose.connect(`${process.env.DB_CONN_URL}`, {
                         useNewUrlParser: true,
                 });
         } catch ({ message }) {
