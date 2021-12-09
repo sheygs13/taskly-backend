@@ -1,17 +1,26 @@
-// require('dotenv').config();
+require('dotenv').config();
 const request = require('supertest');
 const app = require('../../app');
 const User = require('../../models/user');
+const jwt = require('jsonwebtoken');
+const { ObjectId } = require('mongoose').Types;
+
+const userId = new ObjectId();
 
 const user = {
-        name: 'Olusegun Ekoh',
-        email: 'sheygs@gmail.co.uk',
-        password: 'sheygs',
+        _id: userId,
+        name: 'Mark Zuckerberg',
+        email: 'zuck@gmail.co.uk',
+        password: 'zuckerman',
+        tokens: [
+                {
+                        token: jwt.sign({ _id: userId }, process.env.JWT_SECRET),
+                },
+        ],
 };
 
 beforeEach(async () => {
         await User.deleteMany();
-
         await new User(user).save();
 });
 
@@ -54,4 +63,28 @@ test('Should not login a user that does not exist', async () => {
                         password: user.password,
                 })
                 .expect(400);
+});
+
+test('Should get authenticated user profile', async () => {
+        await request(app)
+                .get('/api/v1/auth/users/me')
+                .set('Authorization', `Bearer ${user.tokens[0].token}`)
+                .send()
+                .expect(200);
+});
+
+test('Should not get profile for users not authenticated', async () => {
+        await request(app).get('/api/v1/auth/users/me').set('Authorization', '').send().expect(401);
+});
+
+test('Should delete account for authenticated user', async () => {
+        await request(app)
+                .delete('/api/v1/auth/users/me')
+                .set('Authorization', `Bearer ${user.tokens[0].token}`)
+                .send()
+                .expect(204);
+});
+
+test('Should not delete account for unauthenticated user', async () => {
+        await request(app).delete('/api/v1/auth/users/me').send().expect(401);
 });
