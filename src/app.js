@@ -25,6 +25,7 @@ app.use('/api/v1/tasks', taskRoute);
 
 // base path
 app.get('/', (req, res) => {
+        logger.info(`${req.originalUrl}`);
         Helpers.handleSuccessResponse(res, 200, { message: 'Taskly service here for you!' });
 });
 
