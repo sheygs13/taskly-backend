@@ -9,7 +9,7 @@
                 "test": "jest --testTimeout=10000 --watch --detectOpenHandles --verbose"
         },
         "engines": {
-                "node": "14.x"
+                "node": "14.18.1"
         },
         "repository": {
                 "type": "git",
