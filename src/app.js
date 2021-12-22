@@ -2,8 +2,6 @@ require('./db/db');
 
 require('dotenv').config();
 
-// const _ = require('./middleware/maintenance');
-
 const express = require('express');
 
 const userRoute = require('./routes/user.route');
@@ -13,8 +11,6 @@ const taskRoute = require('./routes/task.route');
 const Helpers = require('./helpers/helpers');
 
 const app = express();
-
-// app.use('/', _);
 
 // parse request body
 app.use(express.json());

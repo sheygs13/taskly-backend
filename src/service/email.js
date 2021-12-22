@@ -17,7 +17,7 @@ const welcomeEmail = async (name, email) => {
                 };
                 await sgMail.send(mailOptions);
         } catch ({ message }) {
-                // console.log(message);
+                console.log(message);
         }
 };
 /**
@@ -35,7 +35,7 @@ const cancellationMail = async (name, email) => {
                 };
                 await sgMail.send(mailOptions);
         } catch ({ message }) {
-                // console.log(message);
+                console.log(message);
         }
 };
 
